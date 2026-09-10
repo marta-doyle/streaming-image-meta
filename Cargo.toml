@@ -1,0 +1,8 @@
+[package]
+name = "imgmeta"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Streaming image metadata reader (JPEG/PNG) with a thin CLI"
+
+[dependencies]
