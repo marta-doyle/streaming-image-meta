@@ -9,8 +9,11 @@
 
 use std::io::{self, Read};
 
+mod exif;
 mod jpeg;
 mod png;
+
+pub use exif::{ExifTag, ExifValue};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Format {
@@ -23,9 +26,9 @@ pub struct ImageMetadata {
     pub format: Format,
     pub width: u32,
     pub height: u32,
-    /// Raw Exif payload from a JPEG APP1 segment, if present. Not yet
-    /// decoded into individual IFD tags.
-    pub exif: Option<Vec<u8>>,
+    /// Tags decoded from IFD0 of a JPEG APP1 Exif segment. Empty if the
+    /// image has no Exif segment or its TIFF header doesn't parse.
+    pub exif: Vec<ExifTag>,
     /// PNG tEXt chunks as (keyword, text) pairs.
     pub text: Vec<(String, String)>,
 }

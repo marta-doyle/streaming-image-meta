@@ -40,9 +40,13 @@ fn run<R: Read>(reader: R) -> io::Result<()> {
     println!("format: {:?}", meta.format);
     println!("dimensions: {}x{}", meta.width, meta.height);
 
-    match &meta.exif {
-        Some(bytes) => println!("exif: {} bytes (raw, not yet decoded)", bytes.len()),
-        None => println!("exif: none"),
+    if meta.exif.is_empty() {
+        println!("exif: none");
+    } else {
+        println!("exif tags:");
+        for tag in &meta.exif {
+            println!("  0x{:04x}: {:?}", tag.id, tag.value);
+        }
     }
 
     if meta.text.is_empty() {

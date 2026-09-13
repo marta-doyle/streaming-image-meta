@@ -16,9 +16,11 @@ never touched.
 
 ## What it reads today
 
-- JPEG: width, height (from the SOF segment), and the raw Exif payload out
-  of the APP1 segment, if present. The Exif TIFF structure itself isn't
-  decoded into tags yet - see the roadmap below.
+- JPEG: width, height (from the SOF segment), and Exif tags decoded out of
+  IFD0 of the APP1 segment, if present - things like Orientation, Make,
+  Model, and DateTime, as (tag ID, value) pairs. The Exif and GPS sub-IFDs
+  aren't followed yet, so tags like GPS coordinates aren't reachable this
+  way - see the roadmap below.
 - PNG: width, height (from IHDR), and any `tEXt` chunks as key/value pairs.
 
 Anything else in the file - IDAT, JPEG scan data, unrelated chunks - is read
@@ -35,8 +37,8 @@ fn main() -> std::io::Result<()> {
     let meta = imgmeta::read_metadata(BufReader::new(file))?;
 
     println!("{}x{}", meta.width, meta.height);
-    if let Some(exif) = &meta.exif {
-        println!("exif payload: {} bytes", exif.len());
+    for tag in &meta.exif {
+        println!("exif tag 0x{:04x}: {:?}", tag.id, tag.value);
     }
 
     Ok(())
@@ -53,7 +55,9 @@ requirement to seek.
 $ cargo run -- photo.jpg
 format: Jpeg
 dimensions: 4032x3024
-exif: 2114 bytes (raw, not yet decoded)
+exif tags:
+  0x0112: Short([1])
+  0x010f: Ascii("Apple")
 text chunks: none
 
 $ cat screenshot.png | cargo run -- -
@@ -68,9 +72,9 @@ Pass `-` as the path to read from stdin instead of a file.
 
 ## Status
 
-Early skeleton. Dimensions and raw Exif/text extraction work; the Exif IFD
-itself is handed back as opaque bytes for now. See the roadmap in the repo
-for what's planned next.
+Early skeleton. Dimensions, IFD0 Exif tags, and PNG text chunks all work.
+Exif/GPS sub-IFDs, compressed PNG text chunks, and a few other things are
+still on the list - see the roadmap in the repo for what's planned next.
 
 ## License
 

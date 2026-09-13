@@ -41,7 +41,7 @@ fn is_sof(marker: u8) -> bool {
 pub(crate) fn read<R: Read>(mut r: R) -> io::Result<ImageMetadata> {
     let mut width = 0u32;
     let mut height = 0u32;
-    let mut exif = None;
+    let mut exif = Vec::new();
 
     loop {
         let marker = read_marker(&mut r)?;
@@ -85,7 +85,7 @@ pub(crate) fn read<R: Read>(mut r: R) -> io::Result<ImageMetadata> {
             let mut data = vec![0u8; data_len as usize];
             r.read_exact(&mut data)?;
             if data.len() >= 6 && &data[..6] == b"Exif\0\0" {
-                exif = Some(data[6..].to_vec());
+                exif = crate::exif::parse_ifd0(&data[6..]);
             }
         } else {
             discard(&mut r, data_len)?;

@@ -63,7 +63,7 @@ pub(crate) fn read<R: Read>(mut r: R) -> io::Result<ImageMetadata> {
         format: Format::Png,
         width,
         height,
-        exif: None,
+        exif: Vec::new(),
         text,
     })
 }
