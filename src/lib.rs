@@ -10,6 +10,7 @@
 use std::io::{self, Read};
 
 mod exif;
+mod inflate;
 mod jpeg;
 mod png;
 
@@ -29,7 +30,9 @@ pub struct ImageMetadata {
     /// Tags decoded from IFD0 of a JPEG APP1 Exif segment. Empty if the
     /// image has no Exif segment or its TIFF header doesn't parse.
     pub exif: Vec<ExifTag>,
-    /// PNG tEXt chunks as (keyword, text) pairs.
+    /// PNG tEXt, zTXt, and iTXt chunks as (keyword, text) pairs, with
+    /// zTXt/iTXt decompressed. A chunk that fails to decompress or doesn't
+    /// parse is skipped rather than surfaced as an error.
     pub text: Vec<(String, String)>,
 }
 

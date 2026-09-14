@@ -21,7 +21,10 @@ never touched.
   Model, and DateTime, as (tag ID, value) pairs. The Exif and GPS sub-IFDs
   aren't followed yet, so tags like GPS coordinates aren't reachable this
   way - see the roadmap below.
-- PNG: width, height (from IHDR), and any `tEXt` chunks as key/value pairs.
+- PNG: width, height (from IHDR), and `tEXt`, `zTXt`, and `iTXt` chunks as
+  key/value pairs, with `zTXt` and compressed `iTXt` text inflated (there's a
+  small DEFLATE/zlib decoder in the crate for this, since bringing in a
+  compression library felt like a lot for a few text chunks).
 
 Anything else in the file - IDAT, JPEG scan data, unrelated chunks - is read
 past and discarded, never allocated.
@@ -72,8 +75,8 @@ Pass `-` as the path to read from stdin instead of a file.
 
 ## Status
 
-Early skeleton. Dimensions, IFD0 Exif tags, and PNG text chunks all work.
-Exif/GPS sub-IFDs, compressed PNG text chunks, and a few other things are
+Early skeleton. Dimensions, IFD0 Exif tags, and PNG text chunks (including
+compressed ones) all work. Exif/GPS sub-IFDs and a few other things are
 still on the list - see the roadmap in the repo for what's planned next.
 
 ## License
