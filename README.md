@@ -73,6 +73,17 @@ text chunks:
 
 Pass `-` as the path to read from stdin instead of a file.
 
+Pass `--json` (before or after the path) to get the same data as a single
+line of JSON instead - useful for piping into `jq` or another program. Exif
+values are rendered as `{"type": "...", "value": ...}` since the underlying
+Rust enum has a variant per Exif field type (Short, Rational, and so on) that
+a plain JSON number can't distinguish:
+
+```
+$ cargo run -- --json photo.jpg
+{"format":"jpeg","width":4032,"height":3024,"exif":[{"id":"0x0112","type":"Short","value":[1]}],"text":[]}
+```
+
 ## Status
 
 Early skeleton. Dimensions, IFD0 Exif tags, and PNG text chunks (including
